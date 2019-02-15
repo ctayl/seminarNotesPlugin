@@ -12,7 +12,7 @@
 
         WidgetSearch.bookmarks = [];
 
-        WidgetSearch.currentLoggedInUser = null;
+        $rootScope.currentLoggedInUser = null;
 
         var tmrDelay = null;
 
@@ -29,8 +29,8 @@
           buildfire.auth.getCurrentUser(function (err, user) {
             console.log("=========User", user);
             if (user) {
-              WidgetSearch.currentLoggedInUser = user;
-              $scope.$apply();
+              $rootScope.currentLoggedInUser = user;
+              if(!$rootScope.$$phase) $rootScope.$apply();
              // WidgetSearch.getBookMarkData(true);
             }
           });
@@ -39,7 +39,7 @@
         buildfire.auth.onLogin(loginCallback);
 
         var logoutCallback = function () {
-          WidgetSearch.currentLoggedInUser = null;
+          $rootScope.currentLoggedInUser = null;
           $scope.$apply();
         };
 
@@ -51,7 +51,7 @@
         buildfire.auth.getCurrentUser(function (err, user) {
           console.log("===========LoggedInUser", user);
           if (user) {
-            WidgetSearch.currentLoggedInUser = user;
+            $rootScope.currentLoggedInUser = user;
             $scope.$apply();
             //WidgetSearch.getBookMarkData();
           }
@@ -128,7 +128,7 @@
             WidgetSearch.bookmarks = result;
 
           };
-          if (WidgetSearch.currentLoggedInUser && WidgetSearch.currentLoggedInUser._id)
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
             UserData.search({}, TAG_NAMES.SEMINAR_BOOKMARKS).then(result, err);
         };
 
@@ -225,8 +225,8 @@
               return console.error('There was a problem removing your data');
             };
 
-            if (WidgetSearch.currentLoggedInUser && WidgetSearch.currentLoggedInUser._id)
-              UserData.delete(item.bookmarkId, TAG_NAMES.SEMINAR_BOOKMARKS, WidgetSearch.currentLoggedInUser._id).then(successRemove, errorRemove)
+            if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
+              UserData.delete(item.bookmarkId, TAG_NAMES.SEMINAR_BOOKMARKS, $rootScope.currentLoggedInUser._id).then(successRemove, errorRemove)
           } else {
             Buildfire.spinner.show();
             WidgetSearch.bookmarkItem = {
@@ -256,8 +256,8 @@
               Buildfire.spinner.hide();
               return console.error('There was a problem saving your data');
             };
-            if (WidgetSearch.currentLoggedInUser && WidgetSearch.currentLoggedInUser._id)
-              UserData.insert(WidgetSearch.bookmarkItem.data, TAG_NAMES.SEMINAR_BOOKMARKS, WidgetSearch.currentLoggedInUser._id).then(successItem, errorItem);
+            if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
+              UserData.insert(WidgetSearch.bookmarkItem.data, TAG_NAMES.SEMINAR_BOOKMARKS, $rootScope.currentLoggedInUser._id).then(successItem, errorItem);
           }
         };
       }]);

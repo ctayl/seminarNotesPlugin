@@ -153,7 +153,7 @@
             if (setBookMarks)
               WidgetHome.setBookmarks();
           };
-          if (WidgetHome.currentLoggedInUser && WidgetHome.currentLoggedInUser._id)
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
             UserData.search({}, TAG_NAMES.SEMINAR_BOOKMARKS).then(result, err);
         };
 
@@ -161,9 +161,8 @@
           for (var item = 0; item < WidgetHome.items.length; item++) {
             WidgetHome.items[item].isBookmarked = false;
             for (var bookmark in WidgetHome.bookmarks) {
-              if (WidgetHome.items[item].id == WidgetHome.bookmarks[bookmark].data.itemId) {
+              if (WidgetHome.items[item].data.deepLinkUrl == WidgetHome.bookmarks[bookmark].data.deepLinkUrl) {
                 WidgetHome.items[item].isBookmarked = true;
-                WidgetHome.items[item].bookmarkId = WidgetHome.bookmarks[bookmark].id;
               }
             }
           }
@@ -201,7 +200,7 @@
           }
         });
         WidgetHome.showBookmarkItems = function () {
-          if (WidgetHome.currentLoggedInUser && WidgetHome.currentLoggedInUser._id) {
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id) {
             ViewStack.push({
               template: 'Bookmarks',
               params: {
@@ -214,7 +213,7 @@
         };
 
         WidgetHome.showItemNotes = function () {
-          if (WidgetHome.currentLoggedInUser && WidgetHome.currentLoggedInUser._id) {
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id) {
             ViewStack.push({
               template: 'Notes',
               params: {
@@ -334,7 +333,7 @@
           //});
         };
 
-        WidgetHome.currentLoggedInUser = null;
+        $rootScope.currentLoggedInUser = null;
 
         /**
          * Method to open buildfire auth login pop up and allow user to login using credentials.
@@ -349,8 +348,8 @@
           buildfire.auth.getCurrentUser(function (err, user) {
             console.log("=========User", user);
             if (user) {
-              WidgetHome.currentLoggedInUser = user;
-              $scope.$apply();
+              $rootScope.currentLoggedInUser = user;
+              if(!$rootScope.$$phase) $rootScope.$apply();
               WidgetHome.getBookMarkData(true);
             }
           });
@@ -359,7 +358,7 @@
         buildfire.auth.onLogin(loginCallback);
 
         var logoutCallback = function () {
-          WidgetHome.currentLoggedInUser = null;
+          $rootScope.currentLoggedInUser = null;
           $scope.$apply();
         };
 
@@ -368,14 +367,16 @@
         /**
          * Check for current logged in user, if not show ogin screen
          */
-        buildfire.auth.getCurrentUser(function (err, user) {
-          console.log("===========LoggedInUser", user);
-          if (user) {
-            WidgetHome.currentLoggedInUser = user;
-            $scope.$apply();
-            WidgetHome.getBookMarkData();
-          }
-        });
+        if (!$rootScope.currentLoggedInUser) {
+          buildfire.auth.getCurrentUser(function (err, user) {
+            console.log("===========LoggedInUser", user);
+            if (user) {
+              $rootScope.currentLoggedInUser = user;
+              if(!$rootScope.$$phase) $rootScope.$apply();
+              WidgetHome.getBookMarkData();
+            }
+          });
+        }
 
         WidgetHome.addToBookmark = function (item, isBookmarked, index) {
           console.log("$$$$$$$$$$$$$$$$$", item, isBookmarked, index);
@@ -400,14 +401,10 @@
               Buildfire.spinner.hide();
               return console.error('There was a problem removing your data');
             };
-            if (WidgetHome.currentLoggedInUser && WidgetHome.currentLoggedInUser._id)
-              UserData.delete(item.bookmarkId, TAG_NAMES.SEMINAR_BOOKMARKS, WidgetHome.currentLoggedInUser._id).then(successRemove, errorRemove);
+            if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
+              UserData.delete(item.bookmarkId, TAG_NAMES.SEMINAR_BOOKMARKS, $rootScope.currentLoggedInUser._id).then(successRemove, errorRemove);
           } else {
-            WidgetHome.bookmarkItem = {
-              data: {
-                itemId: item.id
-              }
-            };
+            WidgetHome.bookmarkItem = item;
             var successItem = function (result) {
               Buildfire.spinner.hide();
               console.log("Inserted", result);
@@ -429,13 +426,13 @@
               Buildfire.spinner.hide();
               return console.error('There was a problem saving your data');
             };
-            if (WidgetHome.currentLoggedInUser && WidgetHome.currentLoggedInUser._id)
+            if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
               UserData.insert(WidgetHome.bookmarkItem.data, TAG_NAMES.SEMINAR_BOOKMARKS).then(successItem, errorItem);
           }
         };
 
         WidgetHome.showSearchPage = function () {
-          if (WidgetHome.currentLoggedInUser && WidgetHome.currentLoggedInUser._id) {
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id) {
             ViewStack.push({
               template: 'Search',
               params: {

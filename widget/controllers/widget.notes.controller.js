@@ -50,13 +50,13 @@
               WidgetNotes.noItemFound = false;
             }
           };
-          if (WidgetNotes.currentLoggedInUser && WidgetNotes.currentLoggedInUser._id)
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
             UserData.search(searchOptions, TAG_NAMES.SEMINAR_NOTES).then(result, err);
           else
             buildfire.auth.getCurrentUser(function (err, user) {
               console.log("===========LoggedInUser2", user);
               if (user) {
-                WidgetNotes.currentLoggedInUser = user;
+                $rootScope.currentLoggedInUser = user;
                 UserData.search(searchOptions, TAG_NAMES.SEMINAR_NOTES).then(result, err);
               }
             });
@@ -108,19 +108,21 @@
           }, error = function (err) {
             console.log('================there was a problem deleting your data', err);
           };
-          if(WidgetNotes.currentLoggedInUser && WidgetNotes.currentLoggedInUser._id)
-          UserData.delete(noteId, TAG_NAMES.SEMINAR_NOTES, WidgetNotes.currentLoggedInUser._id).then(success, error);
+          if($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
+          UserData.delete(noteId, TAG_NAMES.SEMINAR_NOTES, $rootScope.currentLoggedInUser._id).then(success, error);
         };
 
         /**
          * Check for current logged in user, if not show ogin screen
          */
-        buildfire.auth.getCurrentUser(function (err, user) {
-          console.log("===========LoggedInUser2", user);
-          if (user) {
-            WidgetNotes.currentLoggedInUser = user;
-          }
-        });
+        if (!$rootScope.currentLoggedInUser) {
+          buildfire.auth.getCurrentUser(function (err, user) {
+            console.log("===========LoggedInUser2", user);
+            if (user) {
+              $rootScope.currentLoggedInUser = user;
+            }
+          });
+        }
 
         /**
          * Method to open buildfire auth login pop up and allow user to login using credentials.
@@ -135,7 +137,7 @@
           buildfire.auth.getCurrentUser(function (err, user) {
             console.log("=========User", user);
             if (user) {
-              WidgetNotes.currentLoggedInUser = user;
+              $rootScope.currentLoggedInUser = user;
               $scope.$apply();
             }
           });

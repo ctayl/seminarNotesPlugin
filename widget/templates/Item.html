@@ -27,7 +27,7 @@
         </div>
     </div>
     <div class="bottom fixed-bottom primaryBackgroundTheme has-content open transition-third">
-        <div class="extra-links" ng-if="WidgetItem.currentLoggedInUser">
+        <div class="extra-links" ng-if="currentLoggedInUser">
             <!-- When Inactive, use these theme classes -->
             <a class="bg-primary" ng-click="WidgetItem.addToBookmark(WidgetItem.item.id,WidgetItem.item, WidgetItem.item.isBookmarked )" ng-class="WidgetItem.item.isBookmarked?'bookmarked':''">
                 <span class="icon icon-bookmark2 whiteTheme"></span>
@@ -107,9 +107,9 @@
     </div>
 </div>
 <script>
+    // workaround for iOS input bug
     (function () {
         $(document).on('touchstart', 'textarea', function (e) {
-            console.log(e, document.activeElement);
             if (document.activeElement === e.target) {
                 setTimeout(() => {
                     window.focus();

@@ -29,7 +29,7 @@
           itemTitle: "",
           dateAdded: ""
         };
-        WidgetItem.currentLoggedInUser = null;
+        // $rootScope.currentLoggedInUser = null;
         WidgetItem.Note = {
           noteTitle: "",
           noteDescription: ""
@@ -109,7 +109,7 @@
         buildfire.auth.getCurrentUser(function (err, user) {
           console.log("===========LoggedInUser", user);
           if (user) {
-            WidgetItem.currentLoggedInUser = user;
+            $rootScope.currentLoggedInUser = user;
           }
         });
 
@@ -126,7 +126,7 @@
           buildfire.auth.getCurrentUser(function (err, user) {
             console.log("=========User", user);
             if (user) {
-              WidgetItem.currentLoggedInUser = user;
+              $rootScope.currentLoggedInUser = user;
               $scope.$apply();
             }
           });
@@ -145,7 +145,7 @@
           }, err = function (err) {
             console.log("error in fetching data")
           };
-          if (WidgetItem.currentLoggedInUser && WidgetItem.currentLoggedInUser._id)
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
             UserData.search({}, TAG_NAMES.SEMINAR_NOTES).then(result, err);
         };
         var init = function () {
@@ -177,7 +177,7 @@
 
         WidgetItem.showHideNoteList = function () {
           $scope.showNoteDescription = false;
-          if (WidgetItem.currentLoggedInUser && WidgetItem.currentLoggedInUser._id) {
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id) {
             if ($scope.toggleNoteList && !$scope.toggleNoteAdd) {
               $scope.toggleNoteList = 0;
               WidgetItem.ItemNoteList = [];
@@ -212,7 +212,7 @@
           WidgetItem.isNoteSaved = false;
           WidgetItem.inInsertNote = false;
           $scope.showNoteDescription = false;
-          if (WidgetItem.currentLoggedInUser && WidgetItem.currentLoggedInUser._id) {
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id) {
             if ($scope.toggleNoteAdd && !$scope.toggleNoteList) {
               $scope.toggleNoteAdd = 0
             } else {
@@ -258,8 +258,8 @@
             Buildfire.spinner.hide();
             return console.error('There was a problem saving your data');
           };
-          if (WidgetItem.currentLoggedInUser && WidgetItem.currentLoggedInUser._id)
-            UserData.insert(WidgetItem.itemNote, TAG_NAMES.SEMINAR_NOTES, WidgetItem.currentLoggedInUser._id).then(successItem, errorItem);
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
+            UserData.insert(WidgetItem.itemNote, TAG_NAMES.SEMINAR_NOTES, $rootScope.currentLoggedInUser._id).then(successItem, errorItem);
         };
 
         /**
@@ -294,7 +294,7 @@
               WidgetItem.busy = false;
             }
           };
-          if (WidgetItem.currentLoggedInUser && WidgetItem.currentLoggedInUser._id)
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
             UserData.search(searchOptions, TAG_NAMES.SEMINAR_NOTES).then(result, err);
         };
 
@@ -324,7 +324,7 @@
             WidgetItem.bookmarks = result;
             WidgetItem.getBookmarks();
           };
-          if (WidgetItem.currentLoggedInUser && WidgetItem.currentLoggedInUser._id)
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
             UserData.search({}, TAG_NAMES.SEMINAR_BOOKMARKS).then(result, err);
         };
 
@@ -363,8 +363,8 @@
               return console.error('There was a problem removing your data');
             };
 
-            if (WidgetItem.currentLoggedInUser && WidgetItem.currentLoggedInUser._id)
-              UserData.delete(item.bookmarkId, TAG_NAMES.SEMINAR_BOOKMARKS, WidgetItem.currentLoggedInUser._id).then(successRemove, errorRemove);
+            if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
+              UserData.delete(item.bookmarkId, TAG_NAMES.SEMINAR_BOOKMARKS, $rootScope.currentLoggedInUser._id).then(successRemove, errorRemove);
           } else {
             WidgetItem.bookmarkItem = {
               data: {
@@ -391,7 +391,7 @@
               Buildfire.spinner.hide();
               return console.error('There was a problem saving your data');
             };
-            if (WidgetItem.currentLoggedInUser && WidgetItem.currentLoggedInUser._id)
+            if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
               UserData.insert(WidgetItem.bookmarkItem.data, TAG_NAMES.SEMINAR_BOOKMARKS).then(successItem, errorItem);
           }
         };
@@ -459,8 +459,8 @@
           }, error = function (err) {
             console.log('================there was a problem deleting your data', err);
           };
-          if (WidgetItem.currentLoggedInUser && WidgetItem.currentLoggedInUser._id)
-            UserData.delete(noteId, TAG_NAMES.SEMINAR_NOTES, WidgetItem.currentLoggedInUser._id).then(success, error);
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
+            UserData.delete(noteId, TAG_NAMES.SEMINAR_NOTES, $rootScope.currentLoggedInUser._id).then(success, error);
         };
 
         var tmrDelayForNote = null;
@@ -485,8 +485,8 @@
           }, err = function (err) {
           };
 
-          if (WidgetItem.currentLoggedInUser && WidgetItem.currentLoggedInUser._id)
-            UserData.update(WidgetItem.isNoteInserted, WidgetItem.itemNote, TAG_NAMES.SEMINAR_NOTES, WidgetItem.currentLoggedInUser._id).then(data, err);
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
+            UserData.update(WidgetItem.isNoteInserted, WidgetItem.itemNote, TAG_NAMES.SEMINAR_NOTES, $rootScope.currentLoggedInUser._id).then(data, err);
         };
 
         var updateNoteWithDelay = function (note) {

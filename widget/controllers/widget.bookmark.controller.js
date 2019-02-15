@@ -10,7 +10,7 @@
         $scope.isClicked = false;
         WidgetBookmark.bookmarkItem = [];
         WidgetBookmark.bookmarks = {};
-        WidgetBookmark.currentLoggedInUser = null;
+        // $rootScope.currentLoggedInUser = null;
         WidgetBookmark.listeners = {};
         $scope.isFetchedAllData = false;
         var searchOptions = {
@@ -38,12 +38,15 @@
         /**
          * Check for current logged in user, if not show ogin screen
          */
-        buildfire.auth.getCurrentUser(function (err, user) {
-          console.log("===========LoggedInUser", user);
-          if (user) {
-            WidgetBookmark.currentLoggedInUser = user;
-          }
-        });
+        if (!$rootScope.currentLoggedInUser) {
+          buildfire.auth.getCurrentUser(function (err, user) {
+            console.log("===========LoggedInUser", user);
+            if (user) {
+              $rootScope.currentLoggedInUser = user;
+            }
+          });
+        }
+
         WidgetBookmark.init = function () {
           Buildfire.spinner.show();
           var success = function (result) {
@@ -62,49 +65,34 @@
         };
 
         WidgetBookmark.getItems = function () {
-          Buildfire.spinner.show();
-          var successAll = function (resultAll) {
+
+          // buildfire.auth.getCurrentUser(function (err, user) {
+          //   if (user) {
+          //     $rootScope.currentLoggedInUser = user;
+              // _getItems();
+          //   }
+          // });
+
+          // var _getItems = function () {
+            var err = function (error) {
               Buildfire.spinner.hide();
-              WidgetBookmark.items = WidgetBookmark.items.length ? WidgetBookmark.items.concat(resultAll) : resultAll;
-              console.log("==============", WidgetBookmark.items);
-              searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
-              if (resultAll.length == PAGINATION.itemCount) {
-                WidgetBookmark.busy = false;
-              }
-              var err = function (error) {
-                Buildfire.spinner.hide();
-                console.log("============ There is an error in getting data", error);
-              }, result = function (result) {
-                Buildfire.spinner.hide();
-                console.log("===========search", result);
-                WidgetBookmark.bookmarks = result;
-                WidgetBookmark.getBookmarks();
-              };
-            if(WidgetBookmark.currentLoggedInUser && WidgetBookmark.currentLoggedInUser._id)
-              UserData.search({}, TAG_NAMES.SEMINAR_BOOKMARKS).then(result, err);
-
-
-            },
-            errorAll = function (error) {
+              console.log("============ There is an error in getting data", error);
+            }, result = function (result) {
               Buildfire.spinner.hide();
-              console.log("error", error)
-            };
-          DataStore.search(searchOptions, TAG_NAMES.SEMINAR_ITEMS).then(successAll, errorAll);
-        };
-
-        WidgetBookmark.getBookmarks = function () {
-          for (var item = 0; item < WidgetBookmark.items.length; item++) {
-            WidgetBookmark.items[item].isBookmarked = false;
-            for (var bookmark in WidgetBookmark.bookmarks) {
-              if (WidgetBookmark.items[item].id == WidgetBookmark.bookmarks[bookmark].data.itemId) {
+              console.log("===========search", result);
+              if (result.length > 0) {
                 WidgetBookmark.hasAtleastOneBookmark = true;
-                WidgetBookmark.items[item].isBookmarked = true;
-                WidgetBookmark.items[item].bookmarkId = WidgetBookmark.bookmarks[bookmark].id;
               }
-            }
-          }
-          $scope.isFetchedAllData = true;
+              result.forEach(result => {
+                result.isBookmarked = true;
+              });
+              WidgetBookmark.bookmarks = result;
+              $scope.isFetchedAllData = true;
+            };
+            UserData.search({}, TAG_NAMES.SEMINAR_BOOKMARKS).then(result, err);
+          // }
         };
+
         WidgetBookmark.init();
 
         WidgetBookmark.openDetails = function (itemId) {
@@ -148,8 +136,8 @@
           Buildfire.spinner.show();
           var successRemove = function (result) {
             Buildfire.spinner.hide();
-            WidgetBookmark.items.splice(index, 1);
-            WidgetBookmark.getBookmarks();
+            WidgetBookmark.bookmarks.splice(index, 1);
+            // WidgetBookmark.getBookmarks();
             if (!$scope.$$phase)
               $scope.$digest();
             var removeBookmarkModal = $modal.open({
@@ -165,8 +153,8 @@
             Buildfire.spinner.hide();
             return console.error('There was a problem removing your data');
           };
-          if (WidgetBookmark.currentLoggedInUser && WidgetBookmark.currentLoggedInUser._id)
-            UserData.delete(item.bookmarkId, TAG_NAMES.SEMINAR_BOOKMARKS, WidgetBookmark.currentLoggedInUser._id).then(successRemove, errorRemove)
+          if ($rootScope.currentLoggedInUser && $rootScope.currentLoggedInUser._id)
+            UserData.delete(item.id, TAG_NAMES.SEMINAR_BOOKMARKS, $rootScope.currentLoggedInUser._id).then(successRemove, errorRemove)
         };
 
         $scope.$on("$destroy", function () {
