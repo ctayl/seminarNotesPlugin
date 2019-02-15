@@ -540,5 +540,10 @@
         $scope.$watch(function () {
           return WidgetItem.Note;
         }, updateNoteWithDelay, true);
+        $scope.$watch(function () {
+          return WidgetItem.Note;
+        }, function () {
+          console.log(WidgetItem.Note)
+        }, true);
       }]);
 })(window.angular, window.buildfire, window);
