@@ -305,6 +305,7 @@
 
               console.log("----------------------", WidgetHome.items);
               WidgetHome.setBookmarks();
+              Buildfire.appearance.ready();
               WidgetHome.readyToLoadItems = true;
             },
             errorAll = function (error) {
