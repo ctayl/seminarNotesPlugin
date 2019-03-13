@@ -64,22 +64,26 @@
         WidgetBookmark.getItems = function () {
           Buildfire.spinner.show();
           var successAll = function (resultAll) {
-              Buildfire.spinner.hide();
-              WidgetBookmark.items = WidgetBookmark.items.length ? WidgetBookmark.items.concat(resultAll) : resultAll;
-              console.log("==============", WidgetBookmark.items);
+            Buildfire.spinner.hide();
+            if (resultAll.length == PAGINATION.itemCount) {
+              WidgetBookmark.busy = false;
               searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
-              if (resultAll.length == PAGINATION.itemCount) {
-                WidgetBookmark.busy = false;
-              }
-              var err = function (error) {
-                Buildfire.spinner.hide();
-                console.log("============ There is an error in getting data", error);
-              }, result = function (result) {
-                Buildfire.spinner.hide();
-                console.log("===========search", result);
-                WidgetBookmark.bookmarks = result;
-                WidgetBookmark.getBookmarks();
-              };
+              WidgetBookmark.items = WidgetBookmark.items.length ? WidgetBookmark.items.concat(resultAll) : resultAll;
+              WidgetBookmark.getItems();
+              return
+            } else {
+              WidgetBookmark.items = WidgetBookmark.items.length ? WidgetBookmark.items.concat(resultAll) : resultAll;
+            }
+            console.log("==============", WidgetBookmark.items);
+            var err = function (error) {
+              Buildfire.spinner.hide();
+              console.log("============ There is an error in getting data", error);
+            }, result = function (result) {
+              Buildfire.spinner.hide();
+              console.log("===========search", result);
+              WidgetBookmark.bookmarks = result;
+              WidgetBookmark.getBookmarks();
+            };
             if(WidgetBookmark.currentLoggedInUser && WidgetBookmark.currentLoggedInUser._id)
               UserData.search({}, TAG_NAMES.SEMINAR_BOOKMARKS).then(result, err);
 

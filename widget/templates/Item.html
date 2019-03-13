@@ -106,3 +106,14 @@
         </div>
     </div>
 </div>
+<script>
+    (function () {
+        $(document).on('touchstart', 'textarea', function (e) {
+            if (document.activeElement === e.target) {
+                setTimeout(() => {
+                    window.focus();
+                }, 150);
+            }
+        })
+    })()
+</script> 

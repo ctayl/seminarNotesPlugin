@@ -278,18 +278,19 @@
         DataStore.onUpdate().then(null, null, onUpdateCallback);
 
         WidgetHome.loadMore = function () {
-          console.log("------------------------In loadmore");
           if (WidgetHome.busy){
             return;
           }
-
+          
           var itemsCount = (WidgetHome.items && WidgetHome.items.length) ? WidgetHome.items.length : 0;
-
+          console.warn(itemsCount % PAGINATION.itemCount);
+          
           //If the items have loaded, and they are less than a page, don't try to load again
-          if(itemsCount > 0 && itemsCount < PAGINATION.itemCount){
+          if(itemsCount > 0 && itemsCount % PAGINATION.itemCount != 0){
             return;
           }
-
+          console.log("------------------------In loadmore");
+          
           if (WidgetHome.readyToLoadItems)
             WidgetHome.getItems();
         };
