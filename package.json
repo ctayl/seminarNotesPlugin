@@ -6,7 +6,8 @@
   "scripts": {
     "postinstall": "./node_modules/.bin/bower install",
     "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS",
-    "build": "gulp build && cd .. && rm -rf seminarNotesPlugin.zip && zip -r seminarNotesPlugin_release.zip seminarNotesPlugin_release/ && rm -rf seminarNotesPlugin_release/"
+    "build": "gulp build && cd .. && rm -rf seminarNotesPlugin.zip && zip -r seminarNotesPlugin_release.zip seminarNotesPlugin_release/ && rm -rf seminarNotesPlugin_release/",
+    "build-debug": "cd .. && rm -rf seminarNotesPlugin_debug.zip && zip -r seminarNotesPlugin_debug.zip seminarNotesPlugin/ -x '*node_modules/*'"
   },
   "license": "ISC",
   "dependencies": {
@@ -26,6 +27,7 @@
     "gulp-minify-inline": "^1.1.0",
     "gulp-sequence": "^1.0.0",
     "gulp-strip-comments": "^2.5.2",
+    "gulp-strip-debug": "^3.0.0",
     "gulp-uglify": "^3.0.2",
     "gulp-util": "^3.0.8",
     "jasmine-core": "^2.3.4",

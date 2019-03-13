@@ -62,38 +62,40 @@
         };
 
         WidgetBookmark.getItems = function () {
-          Buildfire.spinner.show();
-          var successAll = function (resultAll) {
-            Buildfire.spinner.hide();
-            if (resultAll.length == PAGINATION.itemCount) {
-              WidgetBookmark.busy = false;
-              searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
-              WidgetBookmark.items = WidgetBookmark.items.length ? WidgetBookmark.items.concat(resultAll) : resultAll;
-              WidgetBookmark.getItems();
-              return
-            } else {
-              WidgetBookmark.items = WidgetBookmark.items.length ? WidgetBookmark.items.concat(resultAll) : resultAll;
-            }
-            console.log("==============", WidgetBookmark.items);
-            var err = function (error) {
+          if (ViewStack.getCurrentView().template == 'Bookmarks' && !$scope.isFetchedAllData) {
+            Buildfire.spinner.show();
+            var successAll = function (resultAll) {
               Buildfire.spinner.hide();
-              console.log("============ There is an error in getting data", error);
-            }, result = function (result) {
-              Buildfire.spinner.hide();
-              console.log("===========search", result);
-              WidgetBookmark.bookmarks = result;
-              WidgetBookmark.getBookmarks();
-            };
-            if(WidgetBookmark.currentLoggedInUser && WidgetBookmark.currentLoggedInUser._id)
-              UserData.search({}, TAG_NAMES.SEMINAR_BOOKMARKS).then(result, err);
+              if (resultAll.length == PAGINATION.itemCount) {
+                WidgetBookmark.busy = false;
+                searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
+                WidgetBookmark.items = WidgetBookmark.items.length ? WidgetBookmark.items.concat(resultAll) : resultAll;
+                WidgetBookmark.getItems();
+                return
+              } else {
+                WidgetBookmark.items = WidgetBookmark.items.length ? WidgetBookmark.items.concat(resultAll) : resultAll;
+              }
+              console.log("==============", WidgetBookmark.items);
+              var err = function (error) {
+                Buildfire.spinner.hide();
+                console.log("============ There is an error in getting data", error);
+              }, result = function (result) {
+                Buildfire.spinner.hide();
+                console.log("===========search", result);
+                WidgetBookmark.bookmarks = result;
+                WidgetBookmark.getBookmarks();
+              };
+              if (WidgetBookmark.currentLoggedInUser && WidgetBookmark.currentLoggedInUser._id)
+                UserData.search({}, TAG_NAMES.SEMINAR_BOOKMARKS).then(result, err);
 
 
             },
-            errorAll = function (error) {
-              Buildfire.spinner.hide();
-              console.log("error", error)
-            };
-          DataStore.search(searchOptions, TAG_NAMES.SEMINAR_ITEMS).then(successAll, errorAll);
+              errorAll = function (error) {
+                Buildfire.spinner.hide();
+                console.log("error", error)
+              };
+            DataStore.search(searchOptions, TAG_NAMES.SEMINAR_ITEMS).then(successAll, errorAll);
+          }
         };
 
         WidgetBookmark.getBookmarks = function () {

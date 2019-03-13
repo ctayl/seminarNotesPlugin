@@ -10,6 +10,7 @@ const eslint = require('gulp-eslint');
 const gulpSequence = require('gulp-sequence');
 const minifyInline = require('gulp-minify-inline');
 const gutil = require('gulp-util');
+const stripDebug = require('gulp-strip-debug');
 
 const destinationFolder= releaseFolder();
 
@@ -100,7 +101,8 @@ jsTasks.forEach(function(task){
         return gulp.src(task.src,{base: '.'})
 
              /// obfuscate and minify the JS files
-            .pipe(uglify())
+            .pipe(stripDebug())
+            .pipe(uglify({mangle: false}))
             .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
 
             /// merge all the JS files together. If the

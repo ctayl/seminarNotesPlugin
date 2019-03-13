@@ -339,6 +339,8 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 
 .seminar-notes .list-item-copy .bookmark-holder {
+    margin: -10px;
+    padding: 10px;
     position: absolute;
     top: 51%;
     right: 10px;

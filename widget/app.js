@@ -1,6 +1,7 @@
 'use strict';
 
 (function (angular, buildfire, window) {
+
   angular.module('seminarNotesPluginWidget', ['infinite-scroll', 'ngRoute', 'ui.bootstrap', 'ngTouch', 'ngAnimate'])
     .config(['$routeProvider', '$compileProvider', function ($routeProvider, $compileProvider) {
 
@@ -76,32 +77,6 @@
           }
         };
       }])
-    /*.filter('getImageUrl', ['Buildfire', function (Buildfire) {
-      filter.$stateful = true;
-      function filter(url, width, height, type) {
-        var _imgUrl;
-        if (!_imgUrl) {
-          if (type == 'resize') {
-            Buildfire.imageLib.local.resizeImage(url, {
-              width: width,
-              height: height
-            }, function (err, imgUrl) {
-              _imgUrl = imgUrl;
-              return _imgUrl;
-            });
-          } else {
-            Buildfire.imageLib.local.cropImage(url, {
-              width: width,
-              height: height
-            }, function (err, imgUrl) {
-              _imgUrl = imgUrl;
-              return _imgUrl;
-            });
-          }
-        }
-      }
-      return filter;
-    }])*/
     .directive("buildFireCarousel", ["$rootScope", function ($rootScope) {
       return {
         restrict: 'A',
@@ -155,6 +130,13 @@
       };
     }])
     .run(['ViewStack', '$rootScope', function (ViewStack, $rootScope) {
+      window.$(document).on('touchstart', 'textarea', function (e) {
+        if (document.activeElement === e.target) {
+          setTimeout(function () {
+            window.focus();
+          }, 150);
+        }
+      });
       buildfire.navigation.onBackButtonClick = function () {
         if (ViewStack.hasViews()) {
           if (ViewStack.getCurrentView().template == 'Item') {
@@ -202,23 +184,6 @@
       };
 
     }])
-    /*.filter('cropImage', [function () {
-      filter.$stateful = true;
-      function filter(url, width, height) {
-        var _imgUrl;
-        if (!_imgUrl) {
-          buildfire.imageLib.local.cropImage(url, {
-            width: width,
-            height: height
-          }, function (err, imgUrl) {
-            _imgUrl = imgUrl;
-          });
-        }
-        return _imgUrl;
-      }
-
-      return filter;
-    }])*/
     .directive('backImg', ["$rootScope", function ($rootScope) {
       return function (scope, element, attrs) {
         attrs.$observe('backImg', function (value) {
