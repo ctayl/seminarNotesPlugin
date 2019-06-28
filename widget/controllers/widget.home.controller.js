@@ -278,7 +278,6 @@
         DataStore.onUpdate().then(null, null, onUpdateCallback);
 
         WidgetHome.loadMore = function () {
-          if (ViewStack.hasViews()) return;
           if (WidgetHome.busy){
             return;
           }
